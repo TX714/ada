@@ -45,11 +45,11 @@ procedure Mclock is
 
 	function push_to_five_min(status: Integer) return Integer is
 	begin
-		Pop(Tray_one_min, Val);
+		Pop(Tray_collector, Val);
 		Push(Tray_five_min, Val);
-		size_of_one_min := size_of_one_min - 1 ;
+		size_of_collector := size_of_collector - 1;
 		size_of_five_min := size_of_five_min + 1;
-		for I in 1..3 loop -- reset the minute tray
+		for I in 1..4 loop -- reset the minute tray
 			Pop(Tray_one_min, Val);
 			Push(Tray_collector, Val);
 			size_of_one_min := size_of_one_min - 1;
@@ -60,33 +60,10 @@ procedure Mclock is
 
 	function push_to_fifteen_min(status: Integer) return Integer is
 	begin
-		Pop(Tray_five_min, Val);
+		Pop(Tray_collector, Val);
 		Push(Tray_fifteen_min, Val);
-		size_of_five_min := size_of_five_min - 1;
+		size_of_collector := size_of_collector - 1;
 		size_of_fifteen_min := size_of_fifteen_min + 1;
-		-- we have to reset both five min and one min tray
-		-- reseting five min tray
-		Pop(Tray_five_min, Val);
-		Push(Tray_Collector, Val);
-		size_of_five_min := size_of_five_min - 1;
-		size_of_collector := size_of_collector + 1;
-		-- reseting one min tray
-		for I in 1..4 loop -- reset the minute tray
-			Pop(Tray_one_min, Val);
-			Push(Tray_collector, Val);
-			size_of_one_min := size_of_one_min - 1;
-			size_of_collector := size_of_collector + 1;
-		end loop;
-		----------------------
-	return status;
-	end;
-
-	function push_to_one_hour(status: Integer) return Integer is
-	begin
-		Pop(Tray_fifteen_min, Val);
-		Push(Tray_one_hour, Val);
-		size_of_fifteen_min := size_of_fifteen_min - 1;
-		size_of_one_hour := size_of_one_hour + 1;
 		-- we have to reset both five min and one min tray
 		-- reseting five min tray
 		for I in 1..2 loop -- reset the five tray
@@ -95,7 +72,6 @@ procedure Mclock is
 			size_of_five_min := size_of_five_min - 1;
 			size_of_collector := size_of_collector + 1;
 		end loop;
-		----------------------
 		-- reseting one min tray
 		for I in 1..4 loop -- reset the minute tray
 			Pop(Tray_one_min, Val);
@@ -103,19 +79,80 @@ procedure Mclock is
 			size_of_one_min := size_of_one_min - 1;
 			size_of_collector := size_of_collector + 1;
 		end loop;
-		
-		for I in 1..3 loop -- reset the fifteen minute tray
+	return status;
+	end;
+
+	function push_to_one_hour(status: Integer) return Integer is
+	begin
+		Pop(Tray_collector, Val);
+		Push(Tray_one_hour, Val);
+		size_of_collector := size_of_collector - 1;
+		size_of_one_hour := size_of_one_hour + 1;
+		-- we have to reset one min, five min and fifteen minute trays
+		-- reseting one min tray
+		for I in 1..4 loop -- reset the minute tray
+			Pop(Tray_one_min, Val);
+			Push(Tray_collector, Val);
+			size_of_one_min := size_of_one_min - 1;
+			size_of_collector := size_of_collector + 1;
+		end loop;
+
+		-- reseting five min tray
+		for I in 1..2 loop -- reset the five tray
+			Pop(Tray_five_min, Val);
+			Push(Tray_collector, Val);
+			size_of_five_min := size_of_five_min - 1;
+			size_of_collector := size_of_collector + 1;
+		end loop;
+
+		-- reset the fifteen minute tray
+		for I in 1..3 loop 
 			Pop(Tray_fifteen_min, Val);
 			Push(Tray_collector, Val);
 			size_of_fifteen_min := size_of_fifteen_min - 1;
 			size_of_collector := size_of_collector + 1;
 		end loop;
-		----------------------
+	return status;
+	end;
 
-		----------------------
+	function resetAll(status: Integer) return Integer is
+	begin		
+		-- we have to reset one min, five min, fifteen minute and one hour trays
+		-- reseting one min tray
+		for I in 1..4 loop -- reset the minute tray
+			Pop(Tray_one_min, Val);
+			Push(Tray_collector, Val);
+			size_of_one_min := size_of_one_min - 1;
+			size_of_collector := size_of_collector + 1;
+		end loop;
+
+		-- reseting five min tray
+		for I in 1..2 loop -- reset the five tray
+			Pop(Tray_five_min, Val);
+			Push(Tray_collector, Val);
+			size_of_five_min := size_of_five_min - 1;
+			size_of_collector := size_of_collector + 1;
+		end loop;
+
+		-- reset the fifteen minute tray
+		for I in 1..3 loop 
+			Pop(Tray_fifteen_min, Val);
+			Push(Tray_collector, Val);
+			size_of_fifteen_min := size_of_fifteen_min - 1;
+			size_of_collector := size_of_collector + 1;
+		end loop;
+
+		-- reset the one hour tray
+		for I in 1..11 loop 
+			Pop(Tray_one_hour, Val);
+			Push(Tray_collector, Val);
+			size_of_one_hour := size_of_one_hour - 1;
+			size_of_collector := size_of_collector + 1;
+		end loop;
 
 	return status;
 	end;
+
 	-- Initial tray setup start -----------------------------------
 	function initial_tray_setup(status: Integer) return Integer is
 	begin
@@ -125,6 +162,7 @@ procedure Mclock is
 		return status;
 	end;
 	-- Initial tray setup end -------------------------------------
+
 	-- Display function start -------------------------------------
 	function print_trays(status: Integer) return Integer is
 	begin
@@ -199,12 +237,12 @@ begin	-- main here
 	--------------
 	H := clear_screen(1);
 	l := 0;
-	for I in 1..60 loop
+	for I in 1..800 loop
 		Put_line(Image(Date => Now, Time_Zone => -7*60));
 		H := print_trays(1);
 		delay Duration(0.5);--print and wait for a sec
 		H := clear_screen(1);
-		delay Duration(0.5);--clear and wait for a sec
+		delay Duration(0.05);--clear and wait for a sec
 		if size_of_one_min < max_size_of_one_min then
 			H := push_to_one_min(1);-- size of one min inc and collector dec
 			elsif size_of_five_min < max_size_of_five_min then
@@ -213,6 +251,8 @@ begin	-- main here
 					H := push_to_fifteen_min(1);
 					elsif size_of_one_hour < max_size_of_one_hour then
 						H := push_to_one_hour(1);
+						else
+							H := resetAll(1);
 		end if;
 		New_Line;
 	end loop;
