@@ -110,30 +110,33 @@ procedure main is
             while guessed(guesstemp) = 1 loop
                Put_Line("Do not enter repeated guesses, please enter again");
                Get(guesstemp);
+               exit when guesstemp = 0;
             end loop;
-            guessed(guesstemp) := 1;
-            if(criminallist(guesstemp) = 1) then
-               Put_Line("You made the right guess");
-               delay 1.0;
-               perpetratorleft := perpetratorleft - 1;
-               if(perpetratorleft = 0) then
-                  Put_Line("You win!!");
-                  Put("The pertrators are:");
-                  for i in 1..7 loop
-                     if(criminallist(i) = 1) then
-                        Put(i, width => 2);
-                     end if;
-                  end loop;
-                  delay 2.0;
-                  trigger := 1;
-               end if;
-            else
-               Put_Line("Sorry, your guess is wrong, you are out of the game");
-               playerlist(playerindex) := 0;
-               delay 1.0;
-               numberofplayer := numberofplayer - 1;
-               if numberofplayer = 0 then
-                  trigger := 1;
+            if guesstemp /= 0 then
+               guessed(guesstemp) := 1;
+               if(criminallist(guesstemp) = 1) then
+                  Put_Line("You made the right guess");
+                  delay 1.0;
+                  perpetratorleft := perpetratorleft - 1;
+                  if(perpetratorleft = 0) then
+                     Put_Line("You win!!");
+                     Put("The pertrators are:");
+                     for i in 1..7 loop
+                        if(criminallist(i) = 1) then
+                           Put(i, width => 2);
+                        end if;
+                     end loop;
+                     delay 2.0;
+                     trigger := 1;
+                  end if;
+               else
+                  Put_Line("Sorry, your guess is wrong, you are out of the game");
+                  playerlist(playerindex) := 0;
+                  delay 1.0;
+                  numberofplayer := numberofplayer - 1;
+                  if numberofplayer = 0 then
+                     trigger := 1;
+                  end if;
                end if;
             end if;
          else
@@ -202,13 +205,19 @@ begin
          status := displayrandom(1);
 
          --Game starts from player 1
-         status := checkguessed(1);
+         if playerlist(1) = 1 then
+            status := checkguessed(1);
+         end if;
          status := playerstatus(1,1);
          --Game starts from player 2
-         status := checkguessed(1);
+         if playerlist(2) = 1 then
+            status := checkguessed(1);
+         end if;
          status := playerstatus(1,2);
          --Game starts from player 3
-         status := checkguessed(1);
+         if playerlist(3) = 1 then
+            status := checkguessed(1);
+         end if;
          status := playerstatus(1,3);
 
 
